@@ -1,0 +1,32 @@
+{
+  "name": "walking-pad-manager",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo/AppEntry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "expo": "~54.0.0",
+    "expo-font": "~14.0.12",
+    "expo-status-bar": "~3.0.8",
+    "react": "^19.1.0",
+    "react-native": "^0.81.5",
+    "react-native-safe-area-context": "~5.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@react-native/eslint-config": "^0.81.5",
+    "@types/react": "~19.1.10",
+    "babel-preset-expo": "~54.0.7",
+    "eslint": "8.57.1",
+    "typescript": "~5.9.2"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
