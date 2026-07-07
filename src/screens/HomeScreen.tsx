@@ -2,7 +2,10 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import type { HomeStackParamList } from '../navigation/HomeStack';
 import { theme } from '../theme';
 
 const speedStep = 0.1;
@@ -10,6 +13,7 @@ const minSpeed = 0;
 const maxSpeed = 6;
 
 export function HomeScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(2.5);
 
@@ -78,10 +82,30 @@ export function HomeScreen() {
         </View>
 
         <View style={styles.metricsGrid}>
-          <MetricCard label="Tiempo" value="24 min" icon="timer-outline" />
-          <MetricCard label="Distancia" value="1.2 km" icon="map-marker-distance" />
-          <MetricCard label="Pasos" value="2.840" icon="shoe-print" />
-          <MetricCard label="Calorias" value="132 kcal" icon="fire" />
+          <MetricCard
+            icon="timer-outline"
+            label="Tiempo"
+            onPress={() => navigation.navigate('MetricDetail', { metric: 'duration' })}
+            value="24 min"
+          />
+          <MetricCard
+            icon="map-marker-distance"
+            label="Distancia"
+            onPress={() => navigation.navigate('MetricDetail', { metric: 'distance' })}
+            value="1.2 km"
+          />
+          <MetricCard
+            icon="shoe-print"
+            label="Pasos"
+            onPress={() => navigation.navigate('MetricDetail', { metric: 'steps' })}
+            value="2.840"
+          />
+          <MetricCard
+            icon="fire"
+            label="Calorias"
+            onPress={() => navigation.navigate('MetricDetail', { metric: 'calories' })}
+            value="132 kcal"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -91,16 +115,25 @@ export function HomeScreen() {
 type MetricCardProps = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   label: string;
+  onPress: () => void;
   value: string;
 };
 
-function MetricCard({ icon, label, value }: MetricCardProps) {
+function MetricCard({ icon, label, onPress, value }: MetricCardProps) {
   return (
-    <View style={styles.metricCard}>
-      <MaterialCommunityIcons name={icon} size={24} color={theme.colors.primary} />
+    <Pressable
+      accessibilityLabel={`Ver detalle de ${label}`}
+      accessibilityRole="button"
+      onPress={onPress}
+      style={styles.metricCard}
+    >
+      <View style={styles.metricCardHeader}>
+        <MaterialCommunityIcons color={theme.colors.primary} name={icon} size={24} />
+        <MaterialCommunityIcons color={theme.colors.textMuted} name="chevron-right" size={18} />
+      </View>
       <Text style={styles.metricValue}>{value}</Text>
       <Text style={styles.metricLabel}>{label}</Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -230,6 +263,11 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
     minWidth: 140,
     padding: theme.spacing.md,
+  },
+  metricCardHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   metricValue: {
     color: theme.colors.text,

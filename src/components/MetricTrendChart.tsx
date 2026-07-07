@@ -2,18 +2,21 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { WalkSession } from '../storage/sessionHistory';
-import { getRecentDays, groupSessionsByDay, parseDateKey } from '../storage/sessionStats';
+import { DailyTotal, getRecentDays, groupSessionsByDay, parseDateKey } from '../storage/sessionStats';
 import { theme } from '../theme';
 
 const DAYS_COUNT = 14;
-const CHART_HEIGHT = 120;
+const CHART_HEIGHT = 140;
 const dayLetters = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
 
 type Props = {
   sessions: WalkSession[];
+  unit: string;
+  getDailyValue: (total: DailyTotal) => number;
+  formatValue: (value: number) => string;
 };
 
-export function WeeklyDistanceChart({ sessions }: Props) {
+export function MetricTrendChart({ sessions, unit, getDailyValue, formatValue }: Props) {
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
 
   const days = useMemo(() => {
@@ -23,25 +26,22 @@ export function WeeklyDistanceChart({ sessions }: Props) {
       const total = dailyTotals.get(dateKey);
       return {
         dateKey,
-        distanceMeters: total?.distanceMeters ?? 0,
+        value: total ? getDailyValue(total) : 0,
         weekday: dayLetters[parseDateKey(dateKey).getDay()],
       };
     });
-  }, [sessions]);
+  }, [sessions, getDailyValue]);
 
-  const maxDistance = Math.max(...days.map((day) => day.distanceMeters), 1);
-  const hasActivity = days.some((day) => day.distanceMeters > 0);
-  const peakIndex = days.reduce(
-    (peak, day, index) => (day.distanceMeters > days[peak].distanceMeters ? index : peak),
-    0,
-  );
+  const maxValue = Math.max(...days.map((day) => day.value), 1);
+  const hasActivity = days.some((day) => day.value > 0);
+  const peakIndex = days.reduce((peak, day, index) => (day.value > days[peak].value ? index : peak), 0);
   const selectedDay = days.find((day) => day.dateKey === selectedDateKey) ?? null;
   const todayKey = days[days.length - 1]?.dateKey;
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Distancia</Text>
+        <Text style={styles.title}>Tendencia</Text>
         <Text style={styles.subtitle}>Ultimos {DAYS_COUNT} dias</Text>
       </View>
 
@@ -49,21 +49,19 @@ export function WeeklyDistanceChart({ sessions }: Props) {
         <>
           <View style={styles.chart}>
             {days.map((day, index) => {
-              const barHeight = Math.max(2, (day.distanceMeters / maxDistance) * CHART_HEIGHT);
-              const isPeak = index === peakIndex && day.distanceMeters > 0;
+              const barHeight = Math.max(2, (day.value / maxValue) * CHART_HEIGHT);
+              const isPeak = index === peakIndex && day.value > 0;
 
               return (
                 <Pressable
+                  accessibilityLabel={`${formatValue(day.value)} ${unit}`}
                   accessibilityRole="button"
-                  accessibilityLabel={`${(day.distanceMeters / 1000).toFixed(2)} kilometros`}
                   key={day.dateKey}
                   onPress={() => setSelectedDateKey(day.dateKey)}
                   style={styles.column}
                 >
                   <View style={styles.labelSlot}>
-                    {isPeak ? (
-                      <Text style={styles.peakLabel}>{(day.distanceMeters / 1000).toFixed(1)}</Text>
-                    ) : null}
+                    {isPeak ? <Text style={styles.peakLabel}>{formatValue(day.value)}</Text> : null}
                   </View>
                   <View style={styles.track}>
                     <View
@@ -83,9 +81,7 @@ export function WeeklyDistanceChart({ sessions }: Props) {
           </View>
 
           <Text style={styles.caption}>
-            {selectedDay
-              ? `${(selectedDay.distanceMeters / 1000).toFixed(2)} km`
-              : 'Toca un dia para ver el detalle'}
+            {selectedDay ? `${formatValue(selectedDay.value)} ${unit}` : 'Toca un dia para ver el detalle'}
           </Text>
         </>
       ) : (
@@ -135,7 +131,7 @@ const styles = StyleSheet.create({
   },
   peakLabel: {
     color: theme.colors.primary,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
   },
   track: {

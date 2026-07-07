@@ -4,7 +4,7 @@ import { NavigationContainer, DarkTheme, RouteProp } from '@react-navigation/nat
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { HomeScreen } from './src/screens/HomeScreen';
+import { HomeStack } from './src/navigation/HomeStack';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { DeviceScreen } from './src/screens/DeviceScreen';
 import { WalkingPadBleProvider } from './src/context/WalkingPadBleContext';
@@ -54,7 +54,7 @@ export default function App() {
       <WalkingPadBleProvider>
         <NavigationContainer theme={navigationTheme}>
           <Tab.Navigator screenOptions={getScreenOptions}>
-            <Tab.Screen name="Inicio" component={HomeScreen} />
+            <Tab.Screen name="Inicio" component={HomeStack} />
             <Tab.Screen name="Historial" component={HistoryScreen} />
             <Tab.Screen name="Dispositivo" component={DeviceScreen} />
           </Tab.Navigator>

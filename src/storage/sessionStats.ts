@@ -4,6 +4,7 @@ export type DailyTotal = {
   dateKey: string;
   distanceMeters: number;
   durationSeconds: number;
+  caloriesKcal: number;
   sessionCount: number;
 };
 
@@ -37,6 +38,7 @@ export function groupSessionsByDay(sessions: WalkSession[]): Map<string, DailyTo
       dateKey,
       distanceMeters: (existing?.distanceMeters ?? 0) + (session.distanceMeters ?? 0),
       durationSeconds: (existing?.durationSeconds ?? 0) + session.durationSeconds,
+      caloriesKcal: (existing?.caloriesKcal ?? 0) + (session.caloriesKcal ?? 0),
       sessionCount: (existing?.sessionCount ?? 0) + 1,
     });
   }
