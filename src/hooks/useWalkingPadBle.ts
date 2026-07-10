@@ -25,8 +25,11 @@ import {
   toDeviceCharacteristic,
   toScannedDevice,
   waitForBluetoothPoweredOn,
+  withTimeout,
 } from '../bluetooth/walkingPadBle';
 import { getPairedDevice, savePairedDevice } from '../storage/pairedDevice';
+
+const autoReconnectTimeoutMs = 5000;
 
 type ConnectionStatus = 'idle' | 'scanning' | 'connecting' | 'connected' | 'error';
 
@@ -208,7 +211,11 @@ export function useWalkingPadBle(userId: string | null) {
           return;
         }
 
-        const connected = await manager.connectToDevice(paired.id);
+        const connected = await withTimeout(
+          manager.connectToDevice(paired.id),
+          autoReconnectTimeoutMs,
+          'Tiempo de conexion agotado',
+        );
 
         if (isCancelled) {
           return;
@@ -216,6 +223,8 @@ export function useWalkingPadBle(userId: string | null) {
 
         await finalizeConnection(connected);
       } catch {
+        manager.cancelDeviceConnection(paired.id).catch(() => {});
+
         if (!isCancelled) {
           setStatus('idle');
         }
