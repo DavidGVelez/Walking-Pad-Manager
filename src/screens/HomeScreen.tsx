@@ -5,6 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { DeviceConnectionSheet } from '../components/DeviceConnectionSheet';
+import { DeviceStatusPill } from '../components/DeviceStatusPill';
 import type { HomeStackParamList } from '../navigation/HomeStack';
 import { theme } from '../theme';
 
@@ -16,6 +18,7 @@ export function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(2.5);
+  const [isDeviceSheetVisible, setIsDeviceSheetVisible] = useState(false);
 
   const formattedSpeed = useMemo(() => speed.toFixed(1), [speed]);
 
@@ -34,10 +37,7 @@ export function HomeScreen() {
             <Text style={styles.eyebrow}>Walking Pad</Text>
             <Text style={styles.title}>Manager</Text>
           </View>
-          <View style={[styles.statusBadge, isRunning && styles.statusBadgeActive]}>
-            <View style={[styles.statusDot, isRunning && styles.statusDotActive]} />
-            <Text style={styles.statusText}>{isRunning ? 'Activo' : 'Pausado'}</Text>
-          </View>
+          <DeviceStatusPill onPress={() => setIsDeviceSheetVisible(true)} />
         </View>
 
         <View style={styles.speedPanel}>
@@ -108,6 +108,8 @@ export function HomeScreen() {
           />
         </View>
       </ScrollView>
+
+      <DeviceConnectionSheet onClose={() => setIsDeviceSheetVisible(false)} visible={isDeviceSheetVisible} />
     </SafeAreaView>
   );
 }
@@ -150,6 +152,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     flexDirection: 'row',
+    gap: theme.spacing.sm,
     justifyContent: 'space-between',
   },
   eyebrow: {
@@ -164,34 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '800',
     letterSpacing: 0,
-  },
-  statusBadge: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.surface,
-    borderColor: theme.colors.border,
-    borderRadius: 999,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-  },
-  statusBadgeActive: {
-    borderColor: theme.colors.success,
-  },
-  statusDot: {
-    backgroundColor: theme.colors.textMuted,
-    borderRadius: 5,
-    height: 10,
-    width: 10,
-  },
-  statusDotActive: {
-    backgroundColor: theme.colors.success,
-  },
-  statusText: {
-    color: theme.colors.text,
-    fontSize: 14,
-    fontWeight: '700',
   },
   speedPanel: {
     backgroundColor: theme.colors.surface,

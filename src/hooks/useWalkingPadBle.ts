@@ -12,10 +12,11 @@ import {
   toScannedDevice,
   waitForBluetoothPoweredOn,
 } from '../bluetooth/walkingPadBle';
+import { getPairedDevice, savePairedDevice } from '../storage/pairedDevice';
 
 type ConnectionStatus = 'idle' | 'scanning' | 'connecting' | 'connected' | 'error';
 
-export function useWalkingPadBle() {
+export function useWalkingPadBle(userId: string | null) {
   const managerRef = useRef<BleManager | null>(null);
   const devicesRef = useRef<Map<string, Device>>(new Map());
   const [status, setStatus] = useState<ConnectionStatus>('idle');
@@ -23,6 +24,27 @@ export function useWalkingPadBle() {
   const [connectedDevice, setConnectedDevice] = useState<ScannedDevice | null>(null);
   const [characteristics, setCharacteristics] = useState<DeviceCharacteristic[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const finalizeConnection = async (device: Device) => {
+    const discovered = await device.discoverAllServicesAndCharacteristics();
+    const services = await discovered.services();
+    const nextCharacteristics: DeviceCharacteristic[] = [];
+
+    for (const service of services) {
+      const serviceCharacteristics = await service.characteristics();
+      nextCharacteristics.push(...serviceCharacteristics.map(toDeviceCharacteristic));
+    }
+
+    const scannedDevice = toScannedDevice(discovered);
+    devicesRef.current.set(discovered.id, discovered);
+    setConnectedDevice(scannedDevice);
+    setCharacteristics(nextCharacteristics);
+    setStatus('connected');
+
+    if (userId) {
+      await savePairedDevice(userId, { id: scannedDevice.id, name: scannedDevice.name });
+    }
+  };
 
   useEffect(() => {
     try {
@@ -41,6 +63,58 @@ export function useWalkingPadBle() {
     };
   }, []);
 
+  useEffect(() => {
+    const manager = managerRef.current;
+
+    if (!manager || !userId) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    (async () => {
+      const paired = await getPairedDevice(userId);
+
+      if (!paired || isCancelled) {
+        return;
+      }
+
+      try {
+        setStatus('connecting');
+        setErrorMessage(null);
+
+        const hasPermissions = await requestBluetoothPermissions();
+
+        if (!hasPermissions || isCancelled) {
+          setStatus('idle');
+          return;
+        }
+
+        await waitForBluetoothPoweredOn(manager);
+
+        if (isCancelled) {
+          return;
+        }
+
+        const connected = await manager.connectToDevice(paired.id);
+
+        if (isCancelled) {
+          return;
+        }
+
+        await finalizeConnection(connected);
+      } catch {
+        if (!isCancelled) {
+          setStatus('idle');
+        }
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [userId]);
+
   const scanForWalkingPad = async () => {
     const manager = managerRef.current;
 
@@ -53,10 +127,6 @@ export function useWalkingPadBle() {
     try {
       setStatus('scanning');
       setErrorMessage(null);
-      setConnectedDevice(null);
-      setCharacteristics([]);
-      setDevices([]);
-      devicesRef.current.clear();
 
       const hasPermissions = await requestBluetoothPermissions();
 
@@ -74,7 +144,7 @@ export function useWalkingPadBle() {
           return;
         }
 
-        if (!device || !isLikelyWalkingPad(device)) {
+        if (!device || !isLikelyWalkingPad(device) || device.id === connectedDevice?.id) {
           return;
         }
 
@@ -109,18 +179,7 @@ export function useWalkingPadBle() {
       manager.stopDeviceScan();
 
       const connected = await device.connect();
-      const discovered = await connected.discoverAllServicesAndCharacteristics();
-      const services = await discovered.services();
-      const nextCharacteristics: DeviceCharacteristic[] = [];
-
-      for (const service of services) {
-        const serviceCharacteristics = await service.characteristics();
-        nextCharacteristics.push(...serviceCharacteristics.map(toDeviceCharacteristic));
-      }
-
-      setConnectedDevice(toScannedDevice(discovered));
-      setCharacteristics(nextCharacteristics);
-      setStatus('connected');
+      await finalizeConnection(connected);
     } catch (error) {
       setStatus('error');
       setErrorMessage(getBleErrorMessage(error));

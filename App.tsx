@@ -7,7 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { HomeStack } from './src/navigation/HomeStack';
 import { HistoryScreen } from './src/screens/HistoryScreen';
-import { DeviceScreen } from './src/screens/DeviceScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { WalkingPadBleProvider } from './src/context/WalkingPadBleContext';
@@ -18,7 +18,7 @@ const Tab = createBottomTabNavigator();
 const tabIcons: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
   Inicio: 'run',
   Historial: 'history',
-  Dispositivo: 'bluetooth',
+  Ajustes: 'cog',
 };
 
 function TabBarIcon({ routeName, color, size }: { routeName: string; color: string; size: number }) {
@@ -51,12 +51,14 @@ function getScreenOptions({ route }: { route: RouteProp<Record<string, object | 
 }
 
 function AuthenticatedApp() {
+  const { session } = useAuth();
+
   return (
-    <WalkingPadBleProvider>
+    <WalkingPadBleProvider userId={session?.user.id ?? null}>
       <Tab.Navigator screenOptions={getScreenOptions}>
         <Tab.Screen name="Inicio" component={HomeStack} />
         <Tab.Screen name="Historial" component={HistoryScreen} />
-        <Tab.Screen name="Dispositivo" component={DeviceScreen} />
+        <Tab.Screen name="Ajustes" component={SettingsScreen} />
       </Tab.Navigator>
     </WalkingPadBleProvider>
   );

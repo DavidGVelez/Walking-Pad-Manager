@@ -6,8 +6,13 @@ type WalkingPadBleContextValue = ReturnType<typeof useWalkingPadBle>;
 
 const WalkingPadBleContext = createContext<WalkingPadBleContextValue | null>(null);
 
-export function WalkingPadBleProvider({ children }: { children: ReactNode }) {
-  const value = useWalkingPadBle();
+type WalkingPadBleProviderProps = {
+  children: ReactNode;
+  userId: string | null;
+};
+
+export function WalkingPadBleProvider({ children, userId }: WalkingPadBleProviderProps) {
+  const value = useWalkingPadBle(userId);
 
   return <WalkingPadBleContext.Provider value={value}>{children}</WalkingPadBleContext.Provider>;
 }
