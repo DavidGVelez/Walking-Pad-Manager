@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { ActivityHeatmap } from '../components/ActivityHeatmap';
 import { WeeklyDistanceChart } from '../components/WeeklyDistanceChart';
-import { clearSessions, loadSessions, seedMockSessions, WalkSession } from '../storage/sessionHistory';
+import { loadSessions, WalkSession } from '../storage/sessionHistory';
 import { theme } from '../theme';
 
 function formatDuration(durationSeconds: number) {
@@ -23,7 +23,6 @@ function formatDate(timestamp: number) {
 export function HistoryScreen() {
   const [sessions, setSessions] = useState<WalkSession[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [devError, setDevError] = useState<string | null>(null);
 
   const refreshSessions = useCallback(async () => {
     setIsRefreshing(true);
@@ -50,37 +49,6 @@ export function HistoryScreen() {
           <Text style={styles.eyebrow}>Actividad</Text>
           <Text style={styles.title}>Historial</Text>
         </View>
-
-        {__DEV__ ? (
-          <View style={styles.devActions}>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setDevError(null);
-                seedMockSessions(10)
-                  .then(refreshSessions)
-                  .catch((error) => setDevError(String(error)));
-              }}
-              style={styles.devButton}
-            >
-              <Text style={styles.devButtonText}>Cargar datos de prueba</Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setDevError(null);
-                clearSessions()
-                  .then(refreshSessions)
-                  .catch((error) => setDevError(String(error)));
-              }}
-              style={styles.devButton}
-            >
-              <Text style={styles.devButtonText}>Borrar</Text>
-            </Pressable>
-          </View>
-        ) : null}
-
-        {devError ? <Text style={styles.devErrorText}>{devError}</Text> : null}
 
         <WeeklyDistanceChart sessions={sessions} />
         <ActivityHeatmap sessions={sessions} />
@@ -171,26 +139,6 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '800',
     letterSpacing: 0,
-  },
-  devActions: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-  },
-  devButton: {
-    backgroundColor: theme.colors.surfaceMuted,
-    borderRadius: theme.radius.sm,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-  },
-  devButtonText: {
-    color: theme.colors.textMuted,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  devErrorText: {
-    color: '#fca5a5',
-    fontSize: 13,
-    fontWeight: '700',
   },
   emptyState: {
     alignItems: 'center',
