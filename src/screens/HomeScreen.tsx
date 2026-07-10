@@ -1,33 +1,69 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { DeviceConnectionSheet } from '../components/DeviceConnectionSheet';
 import { DeviceStatusPill } from '../components/DeviceStatusPill';
+import { useWalkSession } from '../context/WalkSessionContext';
 import type { HomeStackParamList } from '../navigation/HomeStack';
+import { loadSessions, WalkSession } from '../storage/sessionHistory';
+import { groupSessionsByDay, toDateKey } from '../storage/sessionStats';
 import { theme } from '../theme';
 
-const speedStep = 0.1;
-const minSpeed = 0;
-const maxSpeed = 6;
+const STRIDE_METERS = 0.75;
+
+function formatElapsed(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function formatDistance(meters: number) {
+  if (meters < 1000) {
+    return `${Math.round(meters)} m`;
+  }
+
+  return `${(meters / 1000).toFixed(2)} km`;
+}
 
 export function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const [isRunning, setIsRunning] = useState(false);
-  const [speed, setSpeed] = useState(2.5);
+  const {
+    caloriesKcal: liveCaloriesKcal,
+    distanceMeters: liveDistanceMeters,
+    elapsedSeconds,
+    isActive,
+    isPaused,
+    isWarmingUp,
+    startSession,
+  } = useWalkSession();
   const [isDeviceSheetVisible, setIsDeviceSheetVisible] = useState(false);
+  const [sessions, setSessions] = useState<WalkSession[]>([]);
 
-  const formattedSpeed = useMemo(() => speed.toFixed(1), [speed]);
+  useFocusEffect(
+    useCallback(() => {
+      loadSessions()
+        .then(setSessions)
+        .catch(() => {});
+    }, []),
+  );
 
-  const updateSpeed = (delta: number) => {
-    setSpeed((currentSpeed) => {
-      const nextSpeed = Math.min(maxSpeed, Math.max(minSpeed, currentSpeed + delta));
-      return Number(nextSpeed.toFixed(1));
-    });
+  const handleSessionCardPress = () => {
+    if (!isActive) {
+      startSession();
+    }
+
+    navigation.navigate('ActiveSession');
   };
+
+  const todayTotal = groupSessionsByDay(sessions).get(toDateKey(Date.now()));
+  const todayDurationSeconds = (todayTotal?.durationSeconds ?? 0) + (isActive ? elapsedSeconds : 0);
+  const todayDistanceMeters = (todayTotal?.distanceMeters ?? 0) + (isActive ? liveDistanceMeters : 0);
+  const todayCaloriesKcal = (todayTotal?.caloriesKcal ?? 0) + (isActive ? liveCaloriesKcal : 0);
+  const hasTodayData = todayDurationSeconds > 0;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -40,71 +76,58 @@ export function HomeScreen() {
           <DeviceStatusPill onPress={() => setIsDeviceSheetVisible(true)} />
         </View>
 
-        <View style={styles.speedPanel}>
-          <Text style={styles.panelLabel}>Velocidad actual</Text>
-          <View style={styles.speedReadout}>
-            <Text style={styles.speedValue}>{formattedSpeed}</Text>
-            <Text style={styles.speedUnit}>km/h</Text>
+        <Pressable
+          accessibilityLabel={isActive ? 'Ver actividad en curso' : 'A caminar'}
+          accessibilityRole="button"
+          onPress={handleSessionCardPress}
+          style={styles.sessionCard}
+        >
+          <View style={styles.sessionCardIcon}>
+            <MaterialCommunityIcons
+              color={theme.colors.background}
+              name={isActive ? 'run' : 'play'}
+              size={28}
+            />
           </View>
-
-          <View style={styles.controls}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Bajar velocidad"
-              style={styles.iconButton}
-              onPress={() => updateSpeed(-speedStep)}
-            >
-              <MaterialCommunityIcons name="minus" size={28} color={theme.colors.text} />
-            </Pressable>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={isRunning ? 'Pausar cinta' : 'Iniciar cinta'}
-              style={[styles.primaryButton, isRunning && styles.primaryButtonActive]}
-              onPress={() => setIsRunning((currentValue) => !currentValue)}
-            >
-              <MaterialCommunityIcons
-                name={isRunning ? 'pause' : 'play'}
-                size={34}
-                color={theme.colors.background}
-              />
-            </Pressable>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Subir velocidad"
-              style={styles.iconButton}
-              onPress={() => updateSpeed(speedStep)}
-            >
-              <MaterialCommunityIcons name="plus" size={28} color={theme.colors.text} />
-            </Pressable>
+          <View style={styles.sessionCardCopy}>
+            <Text style={styles.sessionCardLabel}>
+              {isActive
+                ? isPaused
+                  ? 'En pausa'
+                  : isWarmingUp
+                    ? 'Arrancando...'
+                    : 'Actividad en marcha'
+                : 'Todo listo'}
+            </Text>
+            <Text style={styles.sessionCardValue}>{isActive ? formatElapsed(elapsedSeconds) : 'A caminar'}</Text>
           </View>
-        </View>
+          <MaterialCommunityIcons color={theme.colors.textMuted} name="chevron-right" size={24} />
+        </Pressable>
 
         <View style={styles.metricsGrid}>
           <MetricCard
             icon="timer-outline"
             label="Tiempo"
             onPress={() => navigation.navigate('MetricDetail', { metric: 'duration' })}
-            value="24 min"
+            value={hasTodayData ? `${Math.round(todayDurationSeconds / 60)} min` : '--'}
           />
           <MetricCard
             icon="map-marker-distance"
             label="Distancia"
             onPress={() => navigation.navigate('MetricDetail', { metric: 'distance' })}
-            value="1.2 km"
+            value={hasTodayData ? formatDistance(todayDistanceMeters) : '--'}
           />
           <MetricCard
             icon="shoe-print"
             label="Pasos"
             onPress={() => navigation.navigate('MetricDetail', { metric: 'steps' })}
-            value="2.840"
+            value={hasTodayData ? Math.round(todayDistanceMeters / STRIDE_METERS).toLocaleString('es-ES') : '--'}
           />
           <MetricCard
             icon="fire"
             label="Calorias"
             onPress={() => navigation.navigate('MetricDetail', { metric: 'calories' })}
-            value="132 kcal"
+            value={hasTodayData ? `${Math.round(todayCaloriesKcal)} kcal` : '--'}
           />
         </View>
       </ScrollView>
@@ -133,7 +156,9 @@ function MetricCard({ icon, label, onPress, value }: MetricCardProps) {
         <MaterialCommunityIcons color={theme.colors.primary} name={icon} size={24} />
         <MaterialCommunityIcons color={theme.colors.textMuted} name="chevron-right" size={18} />
       </View>
-      <Text style={styles.metricValue}>{value}</Text>
+      <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} style={styles.metricValue}>
+        {value}
+      </Text>
       <Text style={styles.metricLabel}>{label}</Text>
     </Pressable>
   );
@@ -168,60 +193,37 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 0,
   },
-  speedPanel: {
+  sessionCard: {
+    alignItems: 'center',
     backgroundColor: theme.colors.surface,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.lg,
     borderWidth: 1,
+    flexDirection: 'row',
+    gap: theme.spacing.md,
     padding: theme.spacing.lg,
   },
-  panelLabel: {
-    color: theme.colors.textMuted,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  speedReadout: {
-    alignItems: 'baseline',
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.xl,
-  },
-  speedValue: {
-    color: theme.colors.text,
-    fontSize: 76,
-    fontWeight: '800',
-    letterSpacing: 0,
-  },
-  speedUnit: {
-    color: theme.colors.textMuted,
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  controls: {
+  sessionCardIcon: {
     alignItems: 'center',
-    flexDirection: 'row',
-    gap: theme.spacing.lg,
-    justifyContent: 'center',
-  },
-  iconButton: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.surfaceMuted,
+    backgroundColor: theme.colors.primary,
     borderRadius: 28,
     height: 56,
     justifyContent: 'center',
     width: 56,
   },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.primary,
-    borderRadius: 38,
-    height: 76,
-    justifyContent: 'center',
-    width: 76,
+  sessionCardCopy: {
+    flex: 1,
+    gap: theme.spacing.xs,
   },
-  primaryButtonActive: {
-    backgroundColor: theme.colors.success,
+  sessionCardLabel: {
+    color: theme.colors.textMuted,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  sessionCardValue: {
+    color: theme.colors.text,
+    fontSize: 24,
+    fontWeight: '800',
   },
   metricsGrid: {
     flexDirection: 'row',

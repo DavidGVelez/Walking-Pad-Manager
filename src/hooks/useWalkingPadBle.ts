@@ -1,6 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { BleManager, Device } from 'react-native-ble-plx';
+import { BleManager, Device, Subscription } from 'react-native-ble-plx';
 
+import { base64ToBytes, bytesToBase64 } from '../bluetooth/base64';
+import {
+  decodeControlPointResponse,
+  decodeTreadmillData,
+  encodeRequestControl,
+  encodeSetTargetSpeed,
+  encodeStartOrResume,
+  encodeStopOrPause,
+  FITNESS_MACHINE_CONTROL_POINT_UUID,
+  FITNESS_MACHINE_SERVICE_UUID,
+  FITNESS_MACHINE_STATUS_UUID,
+  TREADMILL_DATA_CHARACTERISTIC_UUID,
+  TreadmillData,
+} from '../bluetooth/ftms';
 import {
   createBleManager,
   DeviceCharacteristic,
@@ -19,11 +33,102 @@ type ConnectionStatus = 'idle' | 'scanning' | 'connecting' | 'connected' | 'erro
 export function useWalkingPadBle(userId: string | null) {
   const managerRef = useRef<BleManager | null>(null);
   const devicesRef = useRef<Map<string, Device>>(new Map());
+  const monitorSubscriptionsRef = useRef<Subscription[]>([]);
+  const disconnectSubscriptionRef = useRef<Subscription | null>(null);
   const [status, setStatus] = useState<ConnectionStatus>('idle');
   const [devices, setDevices] = useState<ScannedDevice[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<ScannedDevice | null>(null);
   const [characteristics, setCharacteristics] = useState<DeviceCharacteristic[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [liveTreadmillData, setLiveTreadmillData] = useState<TreadmillData | null>(null);
+
+  const clearMonitors = () => {
+    for (const subscription of monitorSubscriptionsRef.current) {
+      subscription.remove();
+    }
+
+    monitorSubscriptionsRef.current = [];
+  };
+
+  const handleConnectionLost = () => {
+    disconnectSubscriptionRef.current = null;
+    clearMonitors();
+    setConnectedDevice(null);
+    setCharacteristics([]);
+    setLiveTreadmillData(null);
+    setStatus('idle');
+  };
+
+  const monitorFitnessMachine = (device: Device) => {
+    monitorSubscriptionsRef.current.push(
+      device.monitorCharacteristicForService(
+        FITNESS_MACHINE_SERVICE_UUID,
+        FITNESS_MACHINE_CONTROL_POINT_UUID,
+        (error, characteristic) => {
+          if (error || !characteristic?.value) {
+            return;
+          }
+
+          const bytes = base64ToBytes(characteristic.value);
+          console.log('[FTMS] control point response', decodeControlPointResponse(bytes) ?? bytes);
+        },
+      ),
+      device.monitorCharacteristicForService(
+        FITNESS_MACHINE_SERVICE_UUID,
+        TREADMILL_DATA_CHARACTERISTIC_UUID,
+        (error, characteristic) => {
+          if (error || !characteristic?.value) {
+            return;
+          }
+
+          const bytes = base64ToBytes(characteristic.value);
+          const parsed = decodeTreadmillData(bytes);
+
+          if (parsed) {
+            setLiveTreadmillData(parsed);
+          }
+        },
+      ),
+      device.monitorCharacteristicForService(
+        FITNESS_MACHINE_SERVICE_UUID,
+        FITNESS_MACHINE_STATUS_UUID,
+        (error, characteristic) => {
+          if (error || !characteristic?.value) {
+            return;
+          }
+
+          console.log('[FTMS] status raw', base64ToBytes(characteristic.value).join(','));
+        },
+      ),
+    );
+  };
+
+  const getFitnessMachineDevice = () => {
+    if (!connectedDevice) {
+      return null;
+    }
+
+    return devicesRef.current.get(connectedDevice.id) ?? null;
+  };
+
+  const writeControlPoint = async (bytes: number[]) => {
+    const device = getFitnessMachineDevice();
+
+    if (!device) {
+      throw new Error('No hay dispositivo conectado');
+    }
+
+    await device.writeCharacteristicWithoutResponseForService(
+      FITNESS_MACHINE_SERVICE_UUID,
+      FITNESS_MACHINE_CONTROL_POINT_UUID,
+      bytesToBase64(bytes),
+    );
+  };
+
+  const requestControl = () => writeControlPoint(encodeRequestControl());
+  const startOrResume = () => writeControlPoint(encodeStartOrResume());
+  const stopOrPause = (mode: 'stop' | 'pause') => writeControlPoint(encodeStopOrPause(mode));
+  const setTargetSpeed = (speedKmh: number) => writeControlPoint(encodeSetTargetSpeed(speedKmh));
 
   const finalizeConnection = async (device: Device) => {
     const discovered = await device.discoverAllServicesAndCharacteristics();
@@ -37,6 +142,13 @@ export function useWalkingPadBle(userId: string | null) {
 
     const scannedDevice = toScannedDevice(discovered);
     devicesRef.current.set(discovered.id, discovered);
+    clearMonitors();
+    setLiveTreadmillData(null);
+    monitorFitnessMachine(discovered);
+
+    disconnectSubscriptionRef.current?.remove();
+    disconnectSubscriptionRef.current = managerRef.current?.onDeviceDisconnected(discovered.id, handleConnectionLost) ?? null;
+
     setConnectedDevice(scannedDevice);
     setCharacteristics(nextCharacteristics);
     setStatus('connected');
@@ -191,12 +303,12 @@ export function useWalkingPadBle(userId: string | null) {
       return;
     }
 
+    disconnectSubscriptionRef.current?.remove();
+
     try {
       await managerRef.current?.cancelDeviceConnection(connectedDevice.id);
     } finally {
-      setConnectedDevice(null);
-      setCharacteristics([]);
-      setStatus('idle');
+      handleConnectionLost();
     }
   };
 
@@ -207,7 +319,12 @@ export function useWalkingPadBle(userId: string | null) {
     devices,
     disconnect,
     errorMessage,
+    liveTreadmillData,
+    requestControl,
     scanForWalkingPad,
+    setTargetSpeed,
+    startOrResume,
     status,
+    stopOrPause,
   };
 }

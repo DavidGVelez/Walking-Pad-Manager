@@ -11,6 +11,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { WalkingPadBleProvider } from './src/context/WalkingPadBleContext';
+import { WalkSessionProvider } from './src/context/WalkSessionContext';
 import { theme } from './src/theme';
 
 const Tab = createBottomTabNavigator();
@@ -55,11 +56,13 @@ function AuthenticatedApp() {
 
   return (
     <WalkingPadBleProvider userId={session?.user.id ?? null}>
-      <Tab.Navigator screenOptions={getScreenOptions}>
-        <Tab.Screen name="Inicio" component={HomeStack} />
-        <Tab.Screen name="Historial" component={HistoryScreen} />
-        <Tab.Screen name="Ajustes" component={SettingsScreen} />
-      </Tab.Navigator>
+      <WalkSessionProvider>
+        <Tab.Navigator screenOptions={getScreenOptions}>
+          <Tab.Screen name="Inicio" component={HomeStack} />
+          <Tab.Screen name="Historial" component={HistoryScreen} />
+          <Tab.Screen name="Ajustes" component={SettingsScreen} />
+        </Tab.Navigator>
+      </WalkSessionProvider>
     </WalkingPadBleProvider>
   );
 }
