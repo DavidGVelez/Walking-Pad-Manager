@@ -1,3 +1,4 @@
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DarkTheme, RouteProp } from '@react-navigation/native';
@@ -7,6 +8,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { HomeStack } from './src/navigation/HomeStack';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { DeviceScreen } from './src/screens/DeviceScreen';
+import { LoginScreen } from './src/screens/LoginScreen';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { WalkingPadBleProvider } from './src/context/WalkingPadBleContext';
 import { theme } from './src/theme';
 
@@ -47,19 +50,50 @@ function getScreenOptions({ route }: { route: RouteProp<Record<string, object | 
   };
 }
 
+function AuthenticatedApp() {
+  return (
+    <WalkingPadBleProvider>
+      <Tab.Navigator screenOptions={getScreenOptions}>
+        <Tab.Screen name="Inicio" component={HomeStack} />
+        <Tab.Screen name="Historial" component={HistoryScreen} />
+        <Tab.Screen name="Dispositivo" component={DeviceScreen} />
+      </Tab.Navigator>
+    </WalkingPadBleProvider>
+  );
+}
+
+function RootNavigator() {
+  const { session, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator color={theme.colors.primary} size="large" />
+      </View>
+    );
+  }
+
+  return session ? <AuthenticatedApp /> : <LoginScreen />;
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
-      <WalkingPadBleProvider>
+      <AuthProvider>
         <NavigationContainer theme={navigationTheme}>
-          <Tab.Navigator screenOptions={getScreenOptions}>
-            <Tab.Screen name="Inicio" component={HomeStack} />
-            <Tab.Screen name="Historial" component={HistoryScreen} />
-            <Tab.Screen name="Dispositivo" component={DeviceScreen} />
-          </Tab.Navigator>
+          <RootNavigator />
         </NavigationContainer>
-      </WalkingPadBleProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    alignItems: 'center',
+    backgroundColor: theme.colors.background,
+    flex: 1,
+    justifyContent: 'center',
+  },
+});

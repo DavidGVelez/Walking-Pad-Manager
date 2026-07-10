@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { DeviceCharacteristic } from '../bluetooth/walkingPadBle';
+import { useAuth } from '../context/AuthContext';
 import { useWalkingPadBleContext } from '../context/WalkingPadBleContext';
 import { theme } from '../theme';
 
@@ -17,6 +18,7 @@ export function DeviceScreen() {
     scanForWalkingPad,
     status,
   } = useWalkingPadBleContext();
+  const { session, signOut } = useAuth();
 
   const isBluetoothBusy = status === 'scanning' || status === 'connecting';
 
@@ -119,6 +121,17 @@ export function DeviceScreen() {
               ) : null}
             </View>
           ) : null}
+        </View>
+
+        <View style={styles.accountPanel}>
+          <View>
+            <Text style={styles.panelLabel}>Cuenta</Text>
+            <Text style={styles.accountEmail}>{session?.user.email}</Text>
+          </View>
+          <Pressable accessibilityRole="button" onPress={signOut} style={styles.secondaryButton}>
+            <MaterialCommunityIcons name="logout" size={20} color={theme.colors.text} />
+            <Text style={styles.secondaryButtonText}>Cerrar sesion</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -315,6 +328,22 @@ const styles = StyleSheet.create({
   characteristicFlags: {
     color: theme.colors.primary,
     fontSize: 12,
+    fontWeight: '700',
+  },
+  accountPanel: {
+    alignItems: 'center',
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.lg,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+    justifyContent: 'space-between',
+    padding: theme.spacing.lg,
+  },
+  accountEmail: {
+    color: theme.colors.text,
+    fontSize: 16,
     fontWeight: '700',
   },
 });
