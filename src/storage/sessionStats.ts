@@ -77,6 +77,32 @@ export function computeDurationThresholds(dailyTotals: DailyTotal[]): [number, n
   return [percentile(0.33), percentile(0.66), percentile(0.9)];
 }
 
+// A streak survives past midnight until a full day is missed: it starts
+// counting from today if there's already activity, otherwise from yesterday,
+// so it doesn't drop to 0 the instant a new day begins before the walk.
+export function computeCurrentStreakDays(dailyTotals: Map<string, DailyTotal>, today: Date = new Date()): number {
+  const todayKey = toDateKey(today.getTime());
+  const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+  const yesterdayKey = toDateKey(yesterday.getTime());
+
+  const hasToday = dailyTotals.has(todayKey);
+  const hasYesterday = dailyTotals.has(yesterdayKey);
+
+  if (!hasToday && !hasYesterday) {
+    return 0;
+  }
+
+  let streak = 0;
+  const cursor = hasToday ? new Date(today.getFullYear(), today.getMonth(), today.getDate()) : yesterday;
+
+  while (dailyTotals.has(toDateKey(cursor.getTime()))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
+}
+
 export function getActivityLevel(durationSeconds: number, thresholds: [number, number, number]): number {
   if (durationSeconds <= 0) return 0;
   if (durationSeconds >= thresholds[2]) return 4;
