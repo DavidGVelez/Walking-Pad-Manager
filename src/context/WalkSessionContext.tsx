@@ -65,6 +65,10 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
   const liveTreadmillDataRef = useRef(liveTreadmillData);
   const isManualStoppingRef = useRef(false);
   const previousTreadmillDataRef = useRef(liveTreadmillData);
+  // Guards against the belt's deceleration blip (a stray active reading right
+  // after it reports stopped) being mistaken for a brand new session - see
+  // PRO-49, where that produced two saved rows for one real walk.
+  const lastStoppedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     liveTreadmillDataRef.current = liveTreadmillData;
@@ -164,6 +168,7 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
         await saveSession(session);
         setIsActive(false);
         setIsPaused(false);
+        lastStoppedAtRef.current = Date.now();
       } catch (error) {
         startedAtRef.current = startedAt;
         Alert.alert(
@@ -201,7 +206,13 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
     const currentElapsed = liveTreadmillData.elapsedSeconds ?? 0;
     const currentSpeed = liveTreadmillData.speedKmh ?? 0;
 
-    if (!isActive && (currentElapsed > 0 || currentSpeed > 0)) {
+    // The belt can report one stray active reading while decelerating right
+    // after a stop, before settling at 0 - without this guard that blip gets
+    // read as a brand new session (PRO-49).
+    const justStopped =
+      lastStoppedAtRef.current !== null && Date.now() - lastStoppedAtRef.current < beltStopMaxWaitMs;
+
+    if (!isActive && !justStopped && (currentElapsed > 0 || currentSpeed > 0)) {
       startedAtRef.current = Date.now() - currentElapsed * 1000;
 
       const startingObservedSpeed = currentSpeed > 0 ? currentSpeed : startingSpeedKmh;
