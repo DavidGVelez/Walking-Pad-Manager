@@ -6,11 +6,15 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { DeviceConnectionSheet } from '../components/DeviceConnectionSheet';
-import { DeviceStatusPill } from '../components/DeviceStatusPill';
+import { SpeedometerRing } from '../components/SpeedometerRing';
+import { WeeklyDistanceChart } from '../components/WeeklyDistanceChart';
+import { useAuth } from '../context/AuthContext';
+import { useWalkingPadBleContext } from '../context/WalkingPadBleContext';
 import { useWalkSession } from '../context/WalkSessionContext';
 import type { HomeStackParamList } from '../navigation/HomeStack';
+import { DEFAULT_DAILY_GOAL_MINUTES, getDailyGoalMinutes } from '../storage/dailyGoal';
 import { loadSessions, WalkSession } from '../storage/sessionHistory';
-import { groupSessionsByDay, toDateKey } from '../storage/sessionStats';
+import { computeCurrentStreakDays, groupSessionsByDay, toDateKey } from '../storage/sessionStats';
 import { theme } from '../theme';
 
 const STRIDE_METERS = 0.75;
@@ -29,8 +33,21 @@ function formatDistance(meters: number) {
   return `${(meters / 1000).toFixed(2)} km`;
 }
 
+function getFirstNameFromEmail(email: string | undefined) {
+  const prefix = (email ?? '').split('@')[0] || 'caminante';
+  return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+}
+
+function getGreeting(hour: number) {
+  if (hour < 12) return 'Buenos dias';
+  if (hour < 20) return 'Buenas tardes';
+  return 'Buenas noches';
+}
+
 export function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+  const { session } = useAuth();
+  const { connectedDevice, status } = useWalkingPadBleContext();
   const {
     caloriesKcal: liveCaloriesKcal,
     distanceMeters: liveDistanceMeters,
@@ -42,6 +59,7 @@ export function HomeScreen() {
   } = useWalkSession();
   const [isDeviceSheetVisible, setIsDeviceSheetVisible] = useState(false);
   const [sessions, setSessions] = useState<WalkSession[]>([]);
+  const [dailyGoalMinutes, setDailyGoalMinutes] = useState<number | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -49,6 +67,20 @@ export function HomeScreen() {
         .then(setSessions)
         .catch(() => {});
     }, []),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      const userId = session?.user.id;
+
+      if (!userId) {
+        return;
+      }
+
+      getDailyGoalMinutes(userId)
+        .then(setDailyGoalMinutes)
+        .catch(() => {});
+    }, [session?.user.id]),
   );
 
   const handleSessionCardPress = () => {
@@ -59,21 +91,42 @@ export function HomeScreen() {
     navigation.navigate('ActiveSession');
   };
 
-  const todayTotal = groupSessionsByDay(sessions).get(toDateKey(Date.now()));
+  const dailyTotals = groupSessionsByDay(sessions);
+  const todayTotal = dailyTotals.get(toDateKey(Date.now()));
   const todayDurationSeconds = (todayTotal?.durationSeconds ?? 0) + (isActive ? elapsedSeconds : 0);
   const todayDistanceMeters = (todayTotal?.distanceMeters ?? 0) + (isActive ? liveDistanceMeters : 0);
   const todayCaloriesKcal = (todayTotal?.caloriesKcal ?? 0) + (isActive ? liveCaloriesKcal : 0);
   const hasTodayData = todayDurationSeconds > 0;
 
+  const goalMinutes = dailyGoalMinutes ?? DEFAULT_DAILY_GOAL_MINUTES;
+  const minutesWalked = todayDurationSeconds / 60;
+  const streakDays = computeCurrentStreakDays(dailyTotals);
+
+  const connectionLabel = connectedDevice
+    ? connectedDevice.name
+    : status === 'scanning' || status === 'connecting'
+      ? 'Conectando...'
+      : 'Sin conectar';
+
+  const stateLabel = !isActive
+    ? 'Todo listo'
+    : isPaused
+      ? 'En pausa'
+      : isWarmingUp
+        ? 'Arrancando...'
+        : 'Actividad en marcha';
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <View>
-            <Text style={styles.eyebrow}>Walking Pad</Text>
-            <Text style={styles.title}>Manager</Text>
-          </View>
-          <DeviceStatusPill onPress={() => setIsDeviceSheetVisible(true)} />
+          <Text style={styles.greeting}>
+            {getGreeting(new Date().getHours())}, {getFirstNameFromEmail(session?.user.email)} 👋
+          </Text>
+        </View>
+
+        <View style={styles.gaugeWrapper}>
+          <SpeedometerRing goalMinutes={goalMinutes} minutesWalked={minutesWalked} />
         </View>
 
         <Pressable
@@ -83,26 +136,20 @@ export function HomeScreen() {
           style={styles.sessionCard}
         >
           <View style={styles.sessionCardIcon}>
-            <MaterialCommunityIcons
-              color={theme.colors.background}
-              name={isActive ? 'run' : 'play'}
-              size={28}
-            />
+            <MaterialCommunityIcons color={theme.colors.background} name={isActive ? 'run' : 'play'} size={28} />
           </View>
           <View style={styles.sessionCardCopy}>
-            <Text style={styles.sessionCardLabel}>
-              {isActive
-                ? isPaused
-                  ? 'En pausa'
-                  : isWarmingUp
-                    ? 'Arrancando...'
-                    : 'Actividad en marcha'
-                : 'Todo listo'}
-            </Text>
+            <Text style={styles.sessionCardLabel}>{stateLabel}</Text>
             <Text style={styles.sessionCardValue}>{isActive ? formatElapsed(elapsedSeconds) : 'A caminar'}</Text>
           </View>
           <MaterialCommunityIcons color={theme.colors.textMuted} name="chevron-right" size={24} />
         </Pressable>
+
+        {!isActive && streakDays > 0 ? (
+          <View style={styles.streakBadge}>
+            <Text style={styles.streakText}>🔥 {streakDays} dias de racha</Text>
+          </View>
+        ) : null}
 
         <View style={styles.metricsGrid}>
           <MetricCard
@@ -118,18 +165,20 @@ export function HomeScreen() {
             value={hasTodayData ? formatDistance(todayDistanceMeters) : '--'}
           />
           <MetricCard
-            icon="shoe-print"
-            label="Pasos"
-            onPress={() => navigation.navigate('MetricDetail', { metric: 'steps' })}
-            value={hasTodayData ? Math.round(todayDistanceMeters / STRIDE_METERS).toLocaleString('es-ES') : '--'}
-          />
-          <MetricCard
             icon="fire"
             label="Calorias"
             onPress={() => navigation.navigate('MetricDetail', { metric: 'calories' })}
             value={hasTodayData ? `${Math.round(todayCaloriesKcal)} kcal` : '--'}
           />
+          <MetricCard
+            icon="bluetooth"
+            label="Conexion"
+            onPress={() => setIsDeviceSheetVisible(true)}
+            value={connectionLabel}
+          />
         </View>
+
+        {!isActive ? <WeeklyDistanceChart sessions={sessions} /> : null}
       </ScrollView>
 
       <DeviceConnectionSheet onClose={() => setIsDeviceSheetVisible(false)} visible={isDeviceSheetVisible} />
@@ -175,26 +224,21 @@ const styles = StyleSheet.create({
     gap: theme.spacing.lg,
   },
   header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-    justifyContent: 'space-between',
+    alignSelf: 'stretch',
   },
-  eyebrow: {
-    color: theme.colors.primary,
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0,
-    textTransform: 'uppercase',
-  },
-  title: {
+  greeting: {
     color: theme.colors.text,
-    fontSize: 36,
+    fontSize: 22,
     fontWeight: '800',
-    letterSpacing: 0,
+  },
+  gaugeWrapper: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    paddingVertical: theme.spacing.sm,
   },
   sessionCard: {
     alignItems: 'center',
+    alignSelf: 'stretch',
     backgroundColor: theme.colors.surface,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.lg,
@@ -225,7 +269,22 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
   },
+  streakBadge: {
+    alignSelf: 'center',
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+  },
+  streakText: {
+    color: theme.colors.text,
+    fontSize: 14,
+    fontWeight: '700',
+  },
   metricsGrid: {
+    alignSelf: 'stretch',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: theme.spacing.md,
