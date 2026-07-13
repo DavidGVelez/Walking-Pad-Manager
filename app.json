@@ -14,7 +14,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSBluetoothAlwaysUsageDescription": "Walking Pad Manager uses Bluetooth to connect to your walking pad."
+        "NSBluetoothAlwaysUsageDescription": "Walking Pad Manager uses Bluetooth to connect to your walking pad.",
+        "NSSupportsLiveActivities": true
       },
       "bundleIdentifier": "com.anonymous.walking-pad-manager"
     },
@@ -41,7 +42,8 @@
           ],
           "bluetoothAlwaysPermission": "Allow Walking Pad Manager to connect to your walking pad."
         }
-      ]
+      ],
+      "expo-live-activity"
     ]
   }
 }

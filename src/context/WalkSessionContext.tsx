@@ -2,6 +2,7 @@ import { Alert } from 'react-native';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { useWalkingPadBleContext } from './WalkingPadBleContext';
+import { startWalkActivity, stopWalkActivity, updateWalkActivity } from '../liveActivity/walkLiveActivity';
 import { saveSession, WalkSession } from '../storage/sessionHistory';
 
 export const minSpeedKmh = 2;
@@ -69,6 +70,7 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
   // after it reports stopped) being mistaken for a brand new session - see
   // PRO-49, where that produced two saved rows for one real walk.
   const lastStoppedAtRef = useRef<number | null>(null);
+  const liveActivityIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     liveTreadmillDataRef.current = liveTreadmillData;
@@ -169,6 +171,16 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
         setIsActive(false);
         setIsPaused(false);
         lastStoppedAtRef.current = Date.now();
+
+        if (liveActivityIdRef.current) {
+          stopWalkActivity(liveActivityIdRef.current, {
+            distanceMeters: finalDistanceMeters,
+            elapsedSeconds: finalDurationSeconds,
+            isPaused: true,
+            speedKmh: 0,
+          });
+          liveActivityIdRef.current = null;
+        }
       } catch (error) {
         startedAtRef.current = startedAt;
         Alert.alert(
@@ -225,6 +237,12 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
 
       setIsPaused(false);
       setIsActive(true);
+      liveActivityIdRef.current = startWalkActivity({
+        distanceMeters: liveTreadmillData.distanceMeters ?? 0,
+        elapsedSeconds: currentElapsed,
+        isPaused: false,
+        speedKmh: startingObservedSpeed,
+      });
       console.log('[FTMS] session detected running outside the app');
     } else if (
       isActive &&
@@ -243,6 +261,22 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
     previousTreadmillDataRef.current = liveTreadmillData;
   }, [connectedDevice, isActive, liveTreadmillData, persistSession]);
 
+  // Keeps the Lock Screen / Dynamic Island Live Activity in sync with the
+  // same values the in-app UI shows, at whatever cadence they change (the
+  // simulated 1s tick or live BLE notifications).
+  useEffect(() => {
+    if (!isActive || !liveActivityIdRef.current) {
+      return;
+    }
+
+    updateWalkActivity(liveActivityIdRef.current, {
+      distanceMeters,
+      elapsedSeconds,
+      isPaused,
+      speedKmh,
+    });
+  }, [distanceMeters, elapsedSeconds, isActive, isPaused, speedKmh]);
+
   const startSession = useCallback(() => {
     startedAtRef.current = Date.now();
     maxSpeedRef.current = startingSpeedKmh;
@@ -252,6 +286,12 @@ export function WalkSessionProvider({ children }: { children: ReactNode }) {
     setSimulatedDistanceMeters(0);
     setIsPaused(false);
     setIsActive(true);
+    liveActivityIdRef.current = startWalkActivity({
+      distanceMeters: 0,
+      elapsedSeconds: 0,
+      isPaused: false,
+      speedKmh: startingSpeedKmh,
+    });
 
     if (connectedDevice) {
       beginFakeWarmup();

@@ -52,6 +52,10 @@
     </dict>
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>Allow Walking Pad Manager to connect to your walking pad.</string>
+    <key>NSSupportsLiveActivities</key>
+    <true/>
+    <key>NSSupportsLiveActivitiesFrequentUpdates</key>
+    <false/>
     <key>RCTNewArchEnabled</key>
     <true/>
     <key>UIBackgroundModes</key>
