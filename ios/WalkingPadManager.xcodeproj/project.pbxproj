@@ -8,28 +8,76 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		181B529F807FE76DB211E094 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B8E692EA373CCF51D82760E7 /* PrivacyInfo.xcprivacy */; };
+		1C89FB0729EF46AEBED809EE /* Date+toTimerInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E7E8CBDF2E4082A3789D17 /* Date+toTimerInterval.swift */; };
+		1EB56260F2AE49E2B6BCE9D1 /* LiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9109BA1FE23A462B8797ADEE /* LiveActivity.appex */; };
+		27EFCD0B6E4541A0823BCE2A /* View+applyWidgetURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0458D24D40094527833F8943 /* View+applyWidgetURL.swift */; };
+		353A6CB558A14CB8ABDF7AC1 /* LiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCAB56B585D497E8093873F /* LiveActivityWidget.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		704E6EC07EEA226663AC839F /* libPods-WalkingPadManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 75828DB41BD1120A4A466BF3 /* libPods-WalkingPadManager.a */; };
+		4213DEFD603045FB8E989B22 /* View+applyIfPresent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DFEC52D3664376B7362C90 /* View+applyIfPresent.swift */; };
+		4D0BF74AF0E246BDA721A8FA /* Image+dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EADE641EEE349868E8E6144 /* Image+dynamic.swift */; };
+		56AA56AB8CF5ABE32FBF0454 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FD044C1AD8B55D317BB14223 /* PrivacyInfo.xcprivacy */; };
+		5816C7C0D4854DF8B71AD375 /* LiveActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C424728A8A824D7EBADA6052 /* LiveActivityView.swift */; };
+		5C2C458A83874683BBFA2434 /* LiveActivityWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDA930F907642AC845422DF /* LiveActivityWidgetBundle.swift */; };
+		5D59F7D8305E4BE38E00E135 /* ViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D80E561E94324B62FEF13 /* ViewHelpers.swift */; };
+		78486D848C1E4131B88E9B89 /* Color+hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108D45E3005041A390BFC105 /* Color+hex.swift */; };
+		89F626144BBF3B4E30E53664 /* libPods-WalkingPadManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8B28141C183BE6E78EBDAF /* libPods-WalkingPadManager.a */; };
+		B5B683B7E11A48E9B78E305F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66DC5278152949F8B0403EDB /* Assets.xcassets */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		E504D6824404452728DF214A /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E430172CC23BE09312D5D922 /* ExpoModulesProvider.swift */; };
+		DED40F6E9AD8624D00ABEF73 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D952EC5B54BC17919E041AB0 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AE15C384B864465BACAD2462 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FDAD3ED46CB44DDE8B002059;
+			remoteInfo = LiveActivity;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4A002DFF70AC4CB1AB7ABF6F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1EB56260F2AE49E2B6BCE9D1 /* LiveActivity.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0458D24D40094527833F8943 /* View+applyWidgetURL.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "View+applyWidgetURL.swift"; path = "View+applyWidgetURL.swift"; sourceTree = "<group>"; };
+		04AB1AF143F7F8C722B785CC /* Pods-WalkingPadManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingPadManager.debug.xcconfig"; path = "Target Support Files/Pods-WalkingPadManager/Pods-WalkingPadManager.debug.xcconfig"; sourceTree = "<group>"; };
+		108D45E3005041A390BFC105 /* Color+hex.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "Color+hex.swift"; path = "Color+hex.swift"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* WalkingPadManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkingPadManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = WalkingPadManager/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WalkingPadManager/Info.plist; sourceTree = "<group>"; };
-		50F0AB003C381701C43A1BCB /* Pods-WalkingPadManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingPadManager.release.xcconfig"; path = "Target Support Files/Pods-WalkingPadManager/Pods-WalkingPadManager.release.xcconfig"; sourceTree = "<group>"; };
-		6B0D4E370F645B2863EB1799 /* Pods-WalkingPadManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingPadManager.debug.xcconfig"; path = "Target Support Files/Pods-WalkingPadManager/Pods-WalkingPadManager.debug.xcconfig"; sourceTree = "<group>"; };
-		75828DB41BD1120A4A466BF3 /* libPods-WalkingPadManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WalkingPadManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		44DFEC52D3664376B7362C90 /* View+applyIfPresent.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "View+applyIfPresent.swift"; path = "View+applyIfPresent.swift"; sourceTree = "<group>"; };
+		4BCAB56B585D497E8093873F /* LiveActivityWidget.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = LiveActivityWidget.swift; path = LiveActivityWidget.swift; sourceTree = "<group>"; };
+		66DC5278152949F8B0403EDB /* Assets.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Assets.xcassets; sourceTree = "<group>"; };
+		6D4D80E561E94324B62FEF13 /* ViewHelpers.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ViewHelpers.swift; path = ViewHelpers.swift; sourceTree = "<group>"; };
+		6EADE641EEE349868E8E6144 /* Image+dynamic.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "Image+dynamic.swift"; path = "Image+dynamic.swift"; sourceTree = "<group>"; };
+		8DDA930F907642AC845422DF /* LiveActivityWidgetBundle.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = LiveActivityWidgetBundle.swift; path = LiveActivityWidgetBundle.swift; sourceTree = "<group>"; };
+		9109BA1FE23A462B8797ADEE /* LiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = LiveActivity.appex; path = LiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = WalkingPadManager/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B8E692EA373CCF51D82760E7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = WalkingPadManager/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B806BFA39E094097B20B3A54 /* LiveActivity.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = LiveActivity.entitlements; path = LiveActivity.entitlements; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E430172CC23BE09312D5D922 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-WalkingPadManager/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		C424728A8A824D7EBADA6052 /* LiveActivityView.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = LiveActivityView.swift; path = LiveActivityView.swift; sourceTree = "<group>"; };
+		C7E7E8CBDF2E4082A3789D17 /* Date+toTimerInterval.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "Date+toTimerInterval.swift"; path = "Date+toTimerInterval.swift"; sourceTree = "<group>"; };
+		C8C3577C2DF04F942966EA89 /* Pods-WalkingPadManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingPadManager.release.xcconfig"; path = "Target Support Files/Pods-WalkingPadManager/Pods-WalkingPadManager.release.xcconfig"; sourceTree = "<group>"; };
+		CD8B28141C183BE6E78EBDAF /* libPods-WalkingPadManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WalkingPadManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D952EC5B54BC17919E041AB0 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-WalkingPadManager/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		E53249FAD9B442D4BE138236 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = WalkingPadManager/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* WalkingPadManager-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "WalkingPadManager-Bridging-Header.h"; path = "WalkingPadManager/WalkingPadManager-Bridging-Header.h"; sourceTree = "<group>"; };
+		FD044C1AD8B55D317BB14223 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = WalkingPadManager/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +85,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				704E6EC07EEA226663AC839F /* libPods-WalkingPadManager.a in Frameworks */,
+				89F626144BBF3B4E30E53664 /* libPods-WalkingPadManager.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18E9933453F4416FB271D52B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,24 +108,36 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				B8E692EA373CCF51D82760E7 /* PrivacyInfo.xcprivacy */,
+				FD044C1AD8B55D317BB14223 /* PrivacyInfo.xcprivacy */,
 			);
 			name = WalkingPadManager;
 			sourceTree = "<group>";
 		};
-		1FA0594581B5072D6B78E7D1 /* WalkingPadManager */ = {
+		1A4E11BBFC2A4F2C9BF95DB7 /* LiveActivity */ = {
 			isa = PBXGroup;
 			children = (
-				E430172CC23BE09312D5D922 /* ExpoModulesProvider.swift */,
+				108D45E3005041A390BFC105 /* Color+hex.swift */,
+				C7E7E8CBDF2E4082A3789D17 /* Date+toTimerInterval.swift */,
+				6EADE641EEE349868E8E6144 /* Image+dynamic.swift */,
+				C424728A8A824D7EBADA6052 /* LiveActivityView.swift */,
+				4BCAB56B585D497E8093873F /* LiveActivityWidget.swift */,
+				8DDA930F907642AC845422DF /* LiveActivityWidgetBundle.swift */,
+				44DFEC52D3664376B7362C90 /* View+applyIfPresent.swift */,
+				0458D24D40094527833F8943 /* View+applyWidgetURL.swift */,
+				6D4D80E561E94324B62FEF13 /* ViewHelpers.swift */,
+				E53249FAD9B442D4BE138236 /* Info.plist */,
+				66DC5278152949F8B0403EDB /* Assets.xcassets */,
+				B806BFA39E094097B20B3A54 /* LiveActivity.entitlements */,
 			);
-			name = WalkingPadManager;
+			name = LiveActivity;
+			path = LiveActivity;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				75828DB41BD1120A4A466BF3 /* libPods-WalkingPadManager.a */,
+				CD8B28141C183BE6E78EBDAF /* libPods-WalkingPadManager.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -89,8 +156,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				F8A17F601E68CB7A3C1E48D5 /* Pods */,
-				E1A48DAA0A4DDB389932A82D /* ExpoModulesProviders */,
+				1A4E11BBFC2A4F2C9BF95DB7 /* LiveActivity */,
+				95997020A20E3D2569D1EEF5 /* Pods */,
+				F9BFCC5DA4DDCCB6784D9303 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -101,8 +169,19 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* WalkingPadManager.app */,
+				9109BA1FE23A462B8797ADEE /* LiveActivity.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		95997020A20E3D2569D1EEF5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				04AB1AF143F7F8C722B785CC /* Pods-WalkingPadManager.debug.xcconfig */,
+				C8C3577C2DF04F942966EA89 /* Pods-WalkingPadManager.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -114,21 +193,20 @@
 			path = WalkingPadManager/Supporting;
 			sourceTree = "<group>";
 		};
-		E1A48DAA0A4DDB389932A82D /* ExpoModulesProviders */ = {
+		BEAB050AD9B618D819EF9DA1 /* WalkingPadManager */ = {
 			isa = PBXGroup;
 			children = (
-				1FA0594581B5072D6B78E7D1 /* WalkingPadManager */,
+				D952EC5B54BC17919E041AB0 /* ExpoModulesProvider.swift */,
 			);
-			name = ExpoModulesProviders;
+			name = WalkingPadManager;
 			sourceTree = "<group>";
 		};
-		F8A17F601E68CB7A3C1E48D5 /* Pods */ = {
+		F9BFCC5DA4DDCCB6784D9303 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				6B0D4E370F645B2863EB1799 /* Pods-WalkingPadManager.debug.xcconfig */,
-				50F0AB003C381701C43A1BCB /* Pods-WalkingPadManager.release.xcconfig */,
+				BEAB050AD9B618D819EF9DA1 /* WalkingPadManager */,
 			);
-			path = Pods;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,22 +217,41 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "WalkingPadManager" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				91CBD3F26EE2DCFD9369D3FD /* [Expo] Configure project */,
+				4156BF568D3D4028AA2570BB /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				D61299947495D6A3C840F4A2 /* [CP] Embed Pods Frameworks */,
+				4A002DFF70AC4CB1AB7ABF6F /* Embed Foundation Extensions */,
+				E927C24FE87B02FD2109CA55 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				652298FCB4244B7099E7F4BB /* PBXTargetDependency */,
 			);
 			name = WalkingPadManager;
 			productName = WalkingPadManager;
 			productReference = 13B07F961A680F5B00A75B9A /* WalkingPadManager.app */;
 			productType = "com.apple.product-type.application";
+		};
+		FDAD3ED46CB44DDE8B002059 /* LiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F23C99AA5354A49B0F3D993 /* Build configuration list for PBXNativeTarget "LiveActivity" */;
+			buildPhases = (
+				B0CF8E32489243378092F7AA /* Sources */,
+				18E9933453F4416FB271D52B /* Frameworks */,
+				4279C672F5834B0C828EC6E4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LiveActivity;
+			productName = LiveActivity;
+			productReference = 9109BA1FE23A462B8797ADEE /* LiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -166,6 +263,13 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "CZVT5JD8AN";
+						ProvisioningStyle = Automatic;
+					};
+					FDAD3ED46CB44DDE8B002059 = {
+						LastSwiftMigration = 1250;
+						DevelopmentTeam = "CZVT5JD8AN";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -183,6 +287,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* WalkingPadManager */,
+				FDAD3ED46CB44DDE8B002059 /* LiveActivity */,
 			);
 		};
 /* End PBXProject section */
@@ -195,7 +300,15 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				181B529F807FE76DB211E094 /* PrivacyInfo.xcprivacy in Resources */,
+				56AA56AB8CF5ABE32FBF0454 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4279C672F5834B0C828EC6E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5B683B7E11A48E9B78E305F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +354,30 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		4156BF568D3D4028AA2570BB /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/WalkingPadManager/WalkingPadManager.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-WalkingPadManager/expo-configure-project.sh",
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-WalkingPadManager/ExpoModulesProvider.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-WalkingPadManager/expo-configure-project.sh\"\n";
+		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -275,31 +412,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WalkingPadManager/Pods-WalkingPadManager-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		91CBD3F26EE2DCFD9369D3FD /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/WalkingPadManager/WalkingPadManager.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-WalkingPadManager/expo-configure-project.sh",
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-WalkingPadManager/ExpoModulesProvider.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-WalkingPadManager/expo-configure-project.sh\"\n";
-		};
-		D61299947495D6A3C840F4A2 /* [CP] Embed Pods Frameworks */ = {
+		E927C24FE87B02FD2109CA55 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -329,22 +442,45 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				E504D6824404452728DF214A /* ExpoModulesProvider.swift in Sources */,
+				DED40F6E9AD8624D00ABEF73 /* ExpoModulesProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B0CF8E32489243378092F7AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78486D848C1E4131B88E9B89 /* Color+hex.swift in Sources */,
+				1C89FB0729EF46AEBED809EE /* Date+toTimerInterval.swift in Sources */,
+				4D0BF74AF0E246BDA721A8FA /* Image+dynamic.swift in Sources */,
+				5816C7C0D4854DF8B71AD375 /* LiveActivityView.swift in Sources */,
+				353A6CB558A14CB8ABDF7AC1 /* LiveActivityWidget.swift in Sources */,
+				5C2C458A83874683BBFA2434 /* LiveActivityWidgetBundle.swift in Sources */,
+				4213DEFD603045FB8E989B22 /* View+applyIfPresent.swift in Sources */,
+				27EFCD0B6E4541A0823BCE2A /* View+applyWidgetURL.swift in Sources */,
+				5D59F7D8305E4BE38E00E135 /* ViewHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		652298FCB4244B7099E7F4BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FDAD3ED46CB44DDE8B002059 /* LiveActivity */;
+			targetProxy = AE15C384B864465BACAD2462 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6B0D4E370F645B2863EB1799 /* Pods-WalkingPadManager.debug.xcconfig */;
+			baseConfigurationReference = 04AB1AF143F7F8C722B785CC /* Pods-WalkingPadManager.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WalkingPadManager/WalkingPadManager.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CZVT5JD8AN;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -370,18 +506,20 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "CZVT5JD8AN";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 50F0AB003C381701C43A1BCB /* Pods-WalkingPadManager.release.xcconfig */;
+			baseConfigurationReference = C8C3577C2DF04F942966EA89 /* Pods-WalkingPadManager.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WalkingPadManager/WalkingPadManager.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CZVT5JD8AN;
 				INFOPLIST_FILE = WalkingPadManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -401,6 +539,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "CZVT5JD8AN";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};
@@ -522,9 +663,66 @@
 			};
 			name = Release;
 		};
+		B3CAF84B72524316B630CBBC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = LiveActivity/LiveActivity.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.anonymous.walking-pad-manager.LiveActivity";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				DEVELOPMENT_TEAM = "CZVT5JD8AN";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Debug;
+		};
+		DB53AB268BBB4EBDACA31877 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = LiveActivity/LiveActivity.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 0.1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.anonymous.walking-pad-manager.LiveActivity";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				DEVELOPMENT_TEAM = "CZVT5JD8AN";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0F23C99AA5354A49B0F3D993 /* Build configuration list for PBXNativeTarget "LiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3CAF84B72524316B630CBBC /* Debug */,
+				DB53AB268BBB4EBDACA31877 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "WalkingPadManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
